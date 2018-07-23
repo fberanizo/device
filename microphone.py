@@ -9,11 +9,11 @@ import wave
 import pyaudio
 import paho.mqtt.publish as publish
 
-HOST = os.environ.get("HOST")
-TENANT = os.environ.get("TENANT")
+HOST = os.environ.get("HOST", "localhost")
+TENANT = os.environ.get("TENANT", "admin")
 DEVICE = os.environ.get("DEVICE")
-RATE = int(os.environ.get("RATE"))
-CHANNELS = int(os.environ.get("CHANNELS"))
+RATE = int(os.environ.get("RATE", "16000"))
+CHANNELS = int(os.environ.get("CHANNELS", "1"))
 
 
 def on_stream(in_data, frame_count, time_info, status_flags):

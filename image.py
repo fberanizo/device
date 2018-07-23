@@ -10,12 +10,12 @@ import cv2
 import paho.mqtt.publish as publish
 import paho.mqtt.subscribe as subscribe
 
-HOST = os.environ.get("HOST")
-TENANT = os.environ.get("TENANT")
+HOST = os.environ.get("HOST", "localhost")
+TENANT = os.environ.get("TENANT", "admin")
 DEVICE = os.environ.get("DEVICE")
-WIDTH = int(os.environ.get("WIDTH"))
-HEIGHT = int(os.environ.get("HEIGHT"))
-FPS = float(os.environ.get("FPS"))
+WIDTH = int(os.environ.get("WIDTH", "640"))
+HEIGHT = int(os.environ.get("HEIGHT", "480"))
+FPS = float(os.environ.get("FPS", "25"))
 capture = None
 
 
@@ -40,7 +40,7 @@ def stop():
         capture.release()
 
 
-def on_camera_config(client, userdata, message):
+def on_message_config(client, userdata, message):
     try:
         payload = json.loads(message.payload.decode("utf8"))
         attrs = payload.get("attrs")
@@ -53,7 +53,8 @@ def on_camera_config(client, userdata, message):
         sys.stdout.flush()
 
 
-subscribe.callback(on_camera_config, "/%s/%s/config" % (TENANT, DEVICE), hostname=HOST)
+subscribe.callback(on_message_config, "/%s/%s/config" % (TENANT, DEVICE), hostname=HOST, 
+                   client_id=TENANT + ":" + DEVICE, auth={"username": TENANT, "password": DEVICE})
 
 while True:
     time.sleep(0.1)
